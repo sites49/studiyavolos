@@ -6,305 +6,345 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Студия волос: парикмахерская в Магадане</title>
 <meta name="description" content="Студия волос, Магадан, Пролетарская улица, 70. Стрижки, окрашивание, причёски и восстановление волос. Работаем без выходных, запись через WhatsApp.">
+<meta name="theme-color" content="#16110e">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%236e1a2b'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia' font-size='17' fill='%23ffffff'%3EH%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Onest:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,500;0,600;1,400&family=Golos+Text:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" defer></script>
 <style>
-/* Палитра «бордо и шампанское»: кремовая страница, бордовые акценты и кнопки, тёплый шампань,
-   тёмно-бордовые блоки для программ и подвала. Заголовки Playfair, текст Onest. */
-:root {
-  --bg: #f6f1ec;
-  --paper: #fdfaf7;
-  --ink: #27121a;
-  --muted: #75646a;
-  --line: rgba(39,18,26,.12);
-  --wine: #6e1a2b;
-  --wine-deep: #27121a;
-  --champ: #b1928f;
-  --champ-l: #ecd5d0;
-  --wa: #25d366; --tg: #2aabee; --vk: #0077ff;
-  --f: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --fd: 'Cormorant Garamond', Georgia, serif;
-  --wrap: 1180px;
-}
-* { box-sizing: border-box }
-html { scroll-behavior: smooth }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.6 var(--f); -webkit-font-smoothing: antialiased }
-img { display: block; max-width: 100% }
+:root { --bg: #16110e; --paper: #211a15; --ink: #f5ede4; --muted: #b3a493; --acc: #e3ae6c; --acc2: #f6dcb8;
+  --line: color-mix(in srgb, var(--ink) 14%, transparent); --fd: "Noto Serif Display", Georgia, serif; --fb: "Golos Text", system-ui, sans-serif;
+  --wa: #25d366; --tg: #2aabee; --pad: clamp(16px, 4vw, 56px); --r: 10px }
+* { box-sizing: border-box; margin: 0 }
+html { scroll-behavior: smooth; scroll-padding-top: 72px }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--fb); -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums }
+img { display: block; max-width: 100%; height: auto }
 a { color: inherit }
-button { font: inherit; color: inherit }
-.wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: 20px }
-h1, h2, h3 { margin: 0; font-weight: 500; text-wrap: balance }
-h1, h2 { font-family: var(--fd); letter-spacing: -0.01em }
-.ico { width: 18px; height: 18px; flex: 0 0 auto; fill: currentColor }
-.eyebrow { font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--wine); font-weight: 500 }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 var(--pad) }
+.ico { width: 20px; height: 20px; fill: currentColor; flex: none }
 
-.demo { background: var(--wine-deep); color: var(--champ-l); font-size: 12.5px; text-align: center; padding: 7px 16px }
+/* шапка поверх первого экрана, при прокрутке получает фон */
+header { position: fixed; inset: 0 0 auto; z-index: 30; border-bottom: 1px solid transparent; transition: background .3s, border-color .3s }
+header.solid { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(14px); border-color: var(--line) }
+.bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; height: 72px }
+.bar nav { display: flex; gap: 26px; font-size: 15px }
+.bar nav a, footer a { text-decoration: none; opacity: .8; transition: opacity .2s }
+.bar nav a:hover, footer a:hover { opacity: 1 }
+.logo { font: 600 30px/1 var(--fd); text-decoration: none; transition: opacity .3s }
+/* название уже крупно на первом экране: в шапке оно появляется только после прокрутки */
+.quiet .logo { opacity: 0; pointer-events: none }
+.quiet header.solid .logo { opacity: 1; pointer-events: auto }
+.bar .right { justify-self: end; display: flex; gap: 10px; align-items: center }
 
-header { position: sticky; top: 0; z-index: 30; background: rgba(246,241,236,.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line) }
-.bar { display: flex; align-items: center; gap: 28px; height: 74px }
-.logo { text-decoration: none; display: grid; gap: 4px; line-height: 1; margin-right: auto }
-.logo b { font: 600 24px var(--fd); color: var(--wine) }
-.logo small { font-size: 10.5px; color: var(--muted); letter-spacing: .26em; text-transform: uppercase }
-nav { display: flex; gap: 24px; font-size: 15px }
-nav a { text-decoration: none; color: var(--muted); transition: color .2s }
-nav a:hover { color: var(--ink) }
-.icons { display: flex; gap: 6px }
-.icons a { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); transition: border-color .2s, color .2s }
-.icons a:hover { border-color: var(--wine); color: var(--wine) }
-@media (max-width: 960px) { nav { display: none } .bar { gap: 12px } }
-@media (max-width: 560px) { .icons .vk, .bar .btn-out { display: none } .logo b { font-size: 24px } }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 24px; border-radius: var(--r); border: 1px solid var(--acc);
+  background: var(--acc); color: var(--bg); font: 600 15px/1 var(--fb); text-decoration: none; cursor: pointer; transition: transform .2s, background .2s, border-color .2s }
+.btn:hover { transform: translateY(-2px); background: var(--acc2); border-color: var(--acc2) }
+.btn.ghost { background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--ink); border-color: color-mix(in srgb, var(--ink) 22%, transparent) }
+.btn.ghost:hover { border-color: var(--acc); background: color-mix(in srgb, var(--ink) 10%, transparent) }
+.btn.sm { padding: 11px 18px; font-size: 14px }
+.sq { width: 42px; height: 42px; border-radius: var(--r); display: grid; place-items: center; border: 1px solid var(--line); text-decoration: none }
+.sq:hover { border-color: var(--acc) }
 
-.btn, .btn-out { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 52px; padding: 0 30px; border-radius: 999px; font: 500 15px var(--f); text-decoration: none; cursor: pointer; white-space: nowrap; transition: background .25s, color .25s, transform .15s, box-shadow .25s, border-color .25s }
-.btn { background: var(--wine); color: var(--paper); border: 0 }
-.btn:hover { background: var(--wine-deep); box-shadow: 0 10px 30px rgba(110,26,43,.25) }
-.btn-out { background: transparent; color: var(--wine); border: 1px solid rgba(110,26,43,.45) }
-.btn-out:hover { background: var(--wine); color: var(--paper) }
-.btn:active, .btn-out:active { transform: scale(.97) }
-.bar .btn-out { height: 42px; padding: 0 20px }
+/* первый экран: размытое тёмное фото, двигается медленнее страницы и уходит в ровный фон */
+.stage { position: relative; overflow: hidden; padding-top: 72px }
+.stage .blur { position: absolute; inset: -12% 0 auto; height: 124%; background: center / cover no-repeat; z-index: -1; will-change: transform }
+/* живой фон: два мягких пятна акцентного цвета медленно плавают, сверху плёночное зерно */
+.stage .glow { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden }
+.stage .glow::before, .stage .glow::after { content: ""; position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(60px);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--acc) 60%, transparent), transparent); mix-blend-mode: soft-light }
+.stage .glow::before { left: -15vmax; top: -10vmax; animation: drift 22s ease-in-out infinite alternate }
+.stage .glow::after { right: -20vmax; bottom: -25vmax; animation: drift 28s ease-in-out infinite alternate-reverse; opacity: .7 }
+@keyframes drift { to { transform: translate(18vmax, 12vmax) scale(1.15) } }
+.stage .mesh { position: absolute; inset: -10%; z-index: -1; pointer-events: none; filter: blur(70px) saturate(1.1); opacity: .9 }
+.stage .mesh i { position: absolute; border-radius: 50%; width: 75vmax; height: 75vmax }
+.stage .mesh i:nth-child(1) { background: radial-gradient(closest-side, var(--m1), transparent); left: -10vmax; top: -15vmax; animation: m1 26s ease-in-out infinite alternate }
+.stage .mesh i:nth-child(2) { background: radial-gradient(closest-side, var(--m2), transparent); right: -15vmax; top: 5vmax; animation: m2 32s ease-in-out infinite alternate }
+.stage .mesh i:nth-child(3) { background: radial-gradient(closest-side, var(--m3), transparent); left: 20vmax; bottom: -30vmax; animation: m1 38s ease-in-out infinite alternate-reverse }
+@keyframes m1 { to { transform: translate(22vmax, 14vmax) scale(1.2) } }
+@keyframes m2 { to { transform: translate(-26vmax, 10vmax) scale(.85) } }
+.stage canvas.silk { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none }
+@media (prefers-reduced-motion: reduce) { .stage .mesh i { animation: none } }
+.stage .grain { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .14; mix-blend-mode: overlay; background-size: 180px }
+@media (prefers-reduced-motion: reduce) { .stage .glow::before, .stage .glow::after { animation: none } }
+.stage::after { content: ""; position: absolute; inset: auto 0 0; height: 38%; z-index: -1; background: linear-gradient(transparent, var(--bg)) }
+.hero { padding-top: clamp(48px, 8vw, 120px) }
+/* вариант по центру: экран целиком, название и подпись посередине, без фото */
+.center .stage { min-height: 100svh; display: grid; align-items: center; padding-bottom: 72px }
+.center .hero { padding-top: 0; text-align: center }
+.center .hero h1 .sub { margin-left: 0 }
+.center .hero-top .cta { justify-content: center }
+.center .hero h1 .big { letter-spacing: .02em }
+.center .stage::after { height: 30% }
+.center .band { display: none }
+.big .w { display: inline }
+.hero h1 { font-weight: 500; font-family: var(--fd) }
+.hero-top { position: relative; --big: clamp(40px, 12.4vw, 196px) }
+.hero h1 .big { display: block; font-size: var(--big); line-height: .82; letter-spacing: -.04em; text-transform: uppercase; font-weight: 600 }
+.hero h1 .sub { display: block; font-size: clamp(34px, 5.4vw, 86px); line-height: 1; font-style: italic; color: var(--acc2); margin: .25em 0 0 clamp(0px, 22vw, 330px); letter-spacing: -.01em }
+/* кнопки под подзаголовком с тем же отступом; размер растёт вместе с заголовком, наехать некуда */
+/* на ПК кнопок под заголовком нет: заказ и номер в шапке; на телефоне кнопки под заголовком */
+.hero-top .cta { display: none }
+.bar .tel { font-weight: 600; font-size: 15px; text-decoration: none; margin-right: 6px; opacity: .9 }
+.bar .tel:hover { opacity: 1; color: var(--acc) }
+/* три фото в ряд, среднее ниже: кадры уменьшаются из больших, поэтому остаются резкими */
+.band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: clamp(48px, 6vw, 88px); padding-bottom: 48px }
+.band figure { overflow: hidden; border-radius: var(--r) }
+.band figure:nth-child(2) { transform: translateY(48px) }
+.band img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transform: scale(1.08); transition: transform 1.6s cubic-bezier(.2,.7,.2,1) }
+.band.in img { transform: scale(1) }
 
-/* первый экран */
-.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 56px; align-items: center; padding-block: 64px 80px }
-.hero-text { display: grid; gap: 24px }
-.hero h1 { font-size: clamp(48px, 6.6vw, 94px); line-height: .98; margin-left: -0.035em }
-.hero h1 em { font-style: italic; color: var(--wine) }
-.hero .who { margin: -4px 0 0; font: 500 clamp(18px, 1.8vw, 22px)/1.35 var(--f) }
-.hero p { margin: 0; font-size: 17.5px; color: var(--muted); max-width: 32em }
-.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px }
-.shot { position: relative; justify-self: end; width: min(100%, 440px) }
-.shot .frame { position: relative; border-radius: 18px; overflow: hidden; aspect-ratio: 4 / 5 }
-.shot .frame img { width: 100%; height: 100%; object-fit: cover }
-.tag { position: absolute; left: -36px; bottom: 40px; background: var(--paper); border-radius: 18px; padding: 16px 20px; display: grid; gap: 2px; box-shadow: 0 20px 40px rgba(39,18,26,.18) }
-.tag b { font: 600 32px/1 var(--fd); color: var(--wine) }
-.tag span { font-size: 13px; line-height: 1.3; color: var(--muted) }
+.marquee { border-block: 1px solid var(--line); margin-top: clamp(48px, 6vw, 80px); overflow: hidden; white-space: nowrap }
+.marquee div { display: inline-flex; gap: 48px; padding: 20px 0; animation: run 38s linear infinite; font: italic 500 clamp(24px, 2.6vw, 36px)/1 var(--fd) }
+.marquee span::after { content: "\2726"; margin-left: 48px; color: var(--acc); font-style: normal; font-size: .55em; vertical-align: middle }
+@keyframes run { to { transform: translateX(-50%) } }
+
+section { padding: clamp(72px, 9vw, 128px) 0 0 }
+h2 { font: 500 clamp(44px, 6vw, 92px)/.95 var(--fd); letter-spacing: -.02em; margin-bottom: clamp(28px, 4vw, 48px) }
+
+/* каталог: одна и та же сетка у всех строк, цена в колонке фиксированной ширины по правому краю */
+.rows { border-top: 1px solid var(--line) }
+.row { display: grid; grid-template-columns: 64px 112px minmax(0, 1fr) minmax(0, 1fr) 150px; gap: 28px; align-items: center; width: 100%; padding: 20px 0;
+  border: 0; border-bottom: 1px solid var(--line); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer }
+.row .no { font: 500 clamp(44px, 4.4vw, 64px)/1 var(--fd); font-variant-numeric: lining-nums tabular-nums; color: color-mix(in srgb, var(--acc) 70%, transparent) }
+.row h3 { font: 500 clamp(28px, 3.2vw, 46px)/1.05 var(--fd); transition: color .25s, transform .35s }
+.row p { color: var(--muted); font-size: 15px }
+.row .from { font-weight: 600; white-space: nowrap; text-align: right }
+.row .from::after { content: "\2192"; display: inline-block; margin-left: 8px; transition: transform .25s; color: var(--acc) }
+.row img { width: 112px; height: 140px; object-fit: cover; border-radius: 8px; transition: transform .4s }
+.row:hover img { transform: scale(1.04) }
+.row:hover h3 { color: var(--acc); transform: translateX(10px) }
+.row:hover .from::after { transform: translateX(5px) }
+
+.mosaic { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, minmax(180px, 22vw)); gap: 12px }
+.mosaic figure { overflow: hidden; border-radius: var(--r); position: relative }
+.mosaic figure:first-child { grid-column: span 2; grid-row: span 2 }
+.mosaic img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1) }
+.mosaic figure:hover img { transform: scale(1.05) }
+.mosaic figcaption { position: absolute; left: 14px; bottom: 12px; font-size: 13px; padding: 6px 11px; border-radius: 8px;
+  background: color-mix(in srgb, var(--bg) 70%, transparent); backdrop-filter: blur(8px) }
+
+/* цены: разделы в две колонки, цены по правому краю одной колонки */
+.acc { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; align-items: start }
+.acc > div { border-top: 1px solid var(--line) }
+details { border-bottom: 1px solid var(--line) }
+summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 22px 0; cursor: pointer;
+  font: 500 clamp(26px, 2.5vw, 34px)/1.1 var(--fd) }
+summary::-webkit-details-marker { display: none }
+summary i { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line); position: relative; flex: none; color: var(--muted); transition: transform .3s, color .2s, border-color .2s }
+summary:hover i { color: var(--acc); border-color: var(--acc) }
+summary i::before, summary i::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 12px; height: 1.5px; background: currentColor; transform: translate(-50%, -50%) }
+summary i::after { transform: translate(-50%, -50%) rotate(90deg) }
+details[open] summary i { transform: rotate(45deg) }
+.pl { padding: 0 0 18px }
+.pl button { display: grid; grid-template-columns: minmax(0, 1fr) 124px; gap: 16px; width: 100%; align-items: baseline; padding: 9px 0; background: none; border: 0;
+  color: inherit; font: inherit; font-size: 16px; cursor: pointer; text-align: left }
+.pl button b { font-weight: 600; white-space: nowrap; text-align: right }
+.pl button:hover span { color: var(--acc) }
+
+/* шаги: иконка в скруглённом квадрате, заголовок, текст */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
+.step { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 28px }
+.step svg { width: 52px; height: 52px; padding: 13px; border-radius: 12px; background: color-mix(in srgb, var(--acc) 16%, transparent);
+  stroke: var(--acc); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round }
+.step h3 { font: 500 30px/1.1 var(--fd); margin: 22px 0 8px }
+.step p { color: color-mix(in srgb, var(--ink) 72%, transparent); font-size: 16px }
+
+/* контакты: крупный адрес слева, карта справа */
+.contact { margin-top: clamp(72px, 9vw, 128px); background: var(--paper); padding: clamp(56px, 7vw, 96px) 0 }
+.contact .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(32px, 4vw, 64px); align-items: stretch }
+.contact address { font: 500 clamp(44px, 5.6vw, 92px)/.98 var(--fd); font-style: normal; letter-spacing: -.02em }
+.contact dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 28px; margin: 36px 0; font-size: 18px }
+.contact dt { color: var(--muted) }
+.contact dd { margin: 0; font-weight: 500 }
+.contact dd a { text-decoration: none }
+.contact .cta { display: flex; gap: 10px; flex-wrap: wrap }
+.map { border-radius: var(--r); overflow: hidden; min-height: 420px; border: 1px solid var(--line); background: var(--bg) }
+.map .leaflet-container { width: 100%; height: 100%; min-height: 420px; background: var(--bg); font: 13px var(--fb) }
+.map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.35) sepia(.15) }
+.map .leaflet-control-zoom a { background: var(--paper); color: var(--ink); border-color: var(--line) }
+.map .leaflet-control-attribution { background: color-mix(in srgb, var(--bg) 75%, transparent); color: var(--muted) }
+.map .leaflet-control-attribution a { color: var(--ink) }
+.map .leaflet-popup-content-wrapper, .map .leaflet-popup-tip { background: var(--paper); color: var(--ink); border-radius: var(--r) }
+.map .leaflet-popup-content { margin: 14px 16px; line-height: 1.5 }
+.map .leaflet-popup-content a { color: var(--acc) }
+.pin { position: relative; width: 44px; height: 44px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--acc); border: 3px solid var(--bg);
+  box-shadow: 0 0 0 10px color-mix(in srgb, var(--acc) 22%, transparent), 0 10px 24px rgba(0,0,0,.4) }
+.pin::after { content: ""; position: absolute; inset: 12px; border-radius: 50%; background: var(--bg) }
+
+footer { padding: 36px 0 110px; font-size: 13px; color: var(--muted) }
+footer .wrap { display: grid; gap: 10px }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 22px }
+
+.toast { position: fixed; z-index: 60; padding: 9px 14px; border-radius: 8px; background: var(--ink); color: var(--bg); font: 600 14px/1 var(--fb);
+  pointer-events: none; opacity: 0; transform: translate(-50%, 6px); transition: opacity .2s, transform .2s }
+.toast.on { opacity: 1; transform: translate(-50%, 0) }
+.fab { position: fixed; right: 16px; bottom: 16px; z-index: 40; width: 60px; height: 60px; border-radius: 16px; display: none; place-items: center;
+  background: var(--wa); color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.35) }
+.fab .ico { width: 28px; height: 28px }
+
+#order { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; visibility: hidden; opacity: 0; transition: opacity .25s, visibility .25s }
+#order.open { visibility: visible; opacity: 1 }
+#order .bg { position: absolute; inset: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(4px) }
+.dlg { position: relative; width: min(440px, 100%); background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 28px;
+  transform: translateY(16px); transition: transform .3s }
+#order.open .dlg { transform: none }
+.dlg h3 { font: 500 32px/1.1 var(--fd); padding-right: 40px }
+.dlg .x { position: absolute; right: 16px; top: 16px; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: none; color: inherit; cursor: pointer; font-size: 15px }
+.ways { display: grid; gap: 8px; margin: 22px 0 16px }
+.ways a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r); text-decoration: none; font-weight: 500 }
+.ways a:hover { border-color: var(--acc) }
+.ways small { margin-left: auto; color: var(--muted); font-size: 13px; font-weight: 400 }
+.dot { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; color: #fff }
+.dlg p { font-size: 12px; color: var(--muted) }
+
+.js .up { opacity: 0; transform: translateY(26px); transition: opacity .7s, transform .7s cubic-bezier(.2,.7,.2,1) }
+.js .up.in { opacity: 1; transform: none }
+@media (prefers-reduced-motion: reduce) { .marquee div { animation: none } .js .up { opacity: 1; transform: none } .band img { transform: none } }
+
 @media (max-width: 900px) {
-  .hero { grid-template-columns: minmax(0, 1fr); gap: 40px; padding-block: 36px 56px }
-  .shot { justify-self: center; width: min(100%, 380px) }
-  .tag { left: -8px }
+  .bar { grid-template-columns: auto 1fr; height: 64px } .bar nav { display: none } .bar .right .sq { display: none }
+  .stage { padding-top: 64px }
+  .hero h1 .sub { margin-left: 0 }
+  /* по центру на телефоне: название в две строки крупно, под кнопками три работы */
+  .center .big .w { display: block } .center .hero h1 .big { font-size: min(27vw, 150px); line-height: .9 }
+  .center .hero h1 .sub { font-size: min(9.4vw, 44px); margin-top: .35em }
+  .center .stage { min-height: 0; padding-top: 104px }
+  .center .hero-top .cta { justify-content: stretch }
+  .center .band { display: grid; margin-top: 36px } .center .band img { transform: none }
+  .hero-top .cta { display: grid; gap: 12px; margin-top: 28px } .hero-top .btn { padding: 18px 24px; font-size: 16px } .bar .tel { display: none }
+  .band { gap: 8px; padding-bottom: 24px } .band figure:nth-child(2) { transform: translateY(24px) }
+  .row { grid-template-columns: 72px minmax(0, 1fr); gap: 4px 16px; padding: 18px 0 }
+  .row img { grid-row: span 3; width: 72px; height: 90px }
+  .row .no { display: none } .row h3 { font-size: min(7.4vw, 28px); overflow-wrap: anywhere } .row .from { text-align: left } .row:hover h3 { transform: none }
+  .mosaic { grid-template-columns: 1fr 1fr; grid-template-rows: none; grid-auto-rows: 44vw }
+  .mosaic figure:first-child { grid-row: span 1 }
+  .acc { grid-template-columns: 1fr } .acc > div + div { border-top: 0 }
+  .steps { grid-template-columns: 1fr }
+  .contact .wrap { grid-template-columns: minmax(0, 1fr) } .contact address { font-size: min(10.5vw, 44px) } .contact dl { grid-template-columns: minmax(0, auto) minmax(0, 1fr) }
+  .map, .map .leaflet-container { min-height: 320px }
+  .fab { display: grid }
 }
-
-.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) }
-.fact { padding: 28px 28px 26px; display: grid; gap: 8px; align-content: start }
-.fact:first-child { padding-left: 0 }
-.fact b { font: 600 clamp(36px, 4.2vw, 54px)/1 var(--fd); color: var(--wine) }
-.fact span { color: var(--muted); font-size: 15px }
-@media (max-width: 720px) { .facts { grid-template-columns: minmax(0, 1fr) } .fact { padding-inline: 0; padding-block: 14px } }
-
-section { padding-block: 96px }
-.sec-head { display: grid; gap: 12px; margin-bottom: 44px }
-.sec-head h2 { font-size: clamp(38px, 4.6vw, 60px); line-height: 1.02; margin-left: -0.03em }
-.sec-head p { margin: 0; color: var(--muted); max-width: 38em }
-
-/* направления */
-.dirs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px }
-@media (max-width: 900px) { .dirs { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
-@media (max-width: 520px) { .dirs { grid-template-columns: minmax(0, 1fr) } }
-.dir { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; text-align: left; padding: 0; cursor: pointer; transition: border-color .3s, box-shadow .3s }
-.dir:hover { border-color: rgba(110,26,43,.35); box-shadow: 0 14px 34px rgba(39,18,26,.10) }
-.dir .ph { aspect-ratio: 4 / 3; overflow: hidden }
-.dir .ph img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1) }
-.dir:hover .ph img { transform: scale(1.05) }
-.dir .tx { padding: 18px 20px 20px; display: grid; gap: 6px }
-.dir h3 { font: 500 24px/1.15 var(--fd) }
-.dir p { margin: 0; color: var(--muted); font-size: 14.5px; line-height: 1.5 }
-.dir .from { color: var(--wine); font-size: 14.5px; font-weight: 600; margin-top: 4px }
-
-/* программы для двоих: тёмный блок */
-.duo-sec { background: var(--wine-deep); color: var(--paper) }
-.duo-sec .eyebrow { color: var(--champ) }
-.duo-sec .sec-head p { color: #c9b3b4 }
-.duo { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px }
-@media (max-width: 960px) { .duo { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
-@media (max-width: 520px) { .duo { grid-template-columns: minmax(0, 1fr) } }
-.prog { position: relative; border: 1px solid rgba(236,213,208,.22); border-radius: 18px; padding: 26px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; background: rgba(255,255,255,.03) }
-.prog.top { border-color: var(--champ); background: rgba(184,154,122,.10) }
-.prog .n { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--champ) }
-.prog h3 { font: 500 26px/1.1 var(--fd) }
-.prog .sum { font: 600 30px/1 var(--fd); color: var(--champ-l) }
-.prog p { margin: 0 0 12px; color: #c9b3b4; font-size: 14.5px }
-.prog .btn-out { margin-top: auto; height: 44px; padding: 0 22px; color: var(--paper); border-color: rgba(236,213,208,.45) }
-.prog .btn-out:hover { background: var(--champ); border-color: var(--champ); color: var(--wine-deep) }
-
-/* прайс узкой колонкой: название и цена связаны точечной линией */
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 26px }
-.tabs button { border: 1px solid var(--line); background: transparent; height: 40px; padding: 0 18px; border-radius: 999px; font-size: 14.5px; cursor: pointer; white-space: nowrap; color: var(--muted); transition: background .2s, color .2s, border-color .2s }
-.tabs button:hover { color: var(--ink); border-color: rgba(39,18,26,.3) }
-.tabs button[aria-selected="true"] { background: var(--wine); border-color: var(--wine); color: var(--paper) }
-.plist { max-width: 820px }
-.pr { display: grid; grid-template-columns: auto minmax(28px, 1fr) auto auto; column-gap: 14px; align-items: start; padding-block: 13px }
-.pr .nm { max-width: 30em; font-weight: 500; font-size: 16.5px; line-height: 1.45 }
-.pr small { grid-column: 1 / 3; grid-row: 2; color: var(--muted); font-size: 13.5px; margin-top: 2px }
-.pr .lead { height: 17px; border-bottom: 2px dotted rgba(39,18,26,.22) }
-.pr .sum { font: 600 22px/24px var(--fd); color: var(--wine); white-space: nowrap; font-variant-numeric: lining-nums tabular-nums }
-.pr button { border: 0; background: none; color: var(--muted); font-size: 14px; line-height: 24px; cursor: pointer; padding: 0; margin-left: 10px; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s }
-.pr button:hover { color: var(--wine); border-color: var(--wine) }
-@media (max-width: 600px) { .pr { grid-template-columns: minmax(0, auto) minmax(16px, 1fr) auto; row-gap: 4px } .pr small { grid-column: 1 / -1 } .pr button { grid-column: 1; grid-row: 3; margin-left: 0; justify-self: start } }
-.p-note { margin: 20px 0 0; font-size: 13.5px; color: var(--muted); max-width: 820px }
-
-/* атмосфера */
-.gal { display: grid; grid-template-columns: 1fr 1.4fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; height: 560px }
-.gal div { border-radius: 18px; overflow: hidden }
-.gal div:first-child { grid-row: span 2 } .gal div:nth-child(3) { grid-column: 3; grid-row: 1 / 3 } .gal div:nth-child(4) { grid-column: 2; grid-row: 2 }
-.gal img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1) }
-.gal div:hover img { transform: scale(1.04) }
-@media (max-width: 760px) { .gal { grid-template-columns: 1fr 1fr; grid-template-rows: 260px 200px; height: auto } .gal div:nth-child(n) { grid-column: auto; grid-row: auto } }
-
-.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px }
-@media (max-width: 800px) { .steps { grid-template-columns: minmax(0, 1fr); gap: 28px } }
-.step { display: grid; gap: 10px; align-content: start }
-.step .n { font: 600 15px/1 var(--f); color: var(--wine); letter-spacing: .08em }
-.step h3 { font-size: 19px; font-weight: 500 }
-.step p { margin: 0; color: var(--muted) }
-
-footer { background: var(--wine-deep); color: #ecd5d0; padding-block: 72px 32px }
-footer a { color: inherit }
-.f-top { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 40px; align-items: start }
-@media (max-width: 860px) { .f-top { grid-template-columns: minmax(0, 1fr) } }
-.f-top h2 { font-size: clamp(36px, 4vw, 52px); line-height: 1.04; color: var(--paper) }
-.f-top .btn { margin-top: 24px; background: var(--champ-l); color: var(--wine-deep) }
-.f-top .btn:hover { background: var(--paper) }
-.fcol { display: grid; gap: 10px; font-size: 15px; align-content: start }
-.fcol h4 { margin: 0 0 4px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--champ); font-weight: 500 }
-.fcol a { text-decoration: none; opacity: .9 }
-.fcol a:hover { opacity: 1; color: var(--champ-l) }
-.soc { display: flex; gap: 8px; margin-top: 6px }
-.soc a { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 1px solid rgba(236,213,208,.25); opacity: 1 }
-.soc a:hover { border-color: var(--champ); color: var(--champ-l) }
-.legal { border-top: 1px solid rgba(236,213,208,.16); margin-top: 56px; padding-top: 22px; display: grid; gap: 8px; font-size: 13px; color: #b1928f }
-.legal p { margin: 0; max-width: 72em }
-.legal strong { color: var(--paper); font-weight: 500 }
-.legal nav { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px }
-.legal nav a { color: #b1928f }
-
-/* окно записи */
-.sheet-bg { position: fixed; inset: 0; background: rgba(39,18,26,.45); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .25s }
-.sheet { position: fixed; left: 50%; bottom: 0; z-index: 51; width: min(440px, 100%); transform: translate(-50%, 104%); background: var(--paper); border-radius: 24px 24px 0 0; padding: 22px 22px calc(22px + env(safe-area-inset-bottom, 0px)); transition: transform .35s cubic-bezier(.2,.8,.2,1) }
-@media (min-width: 700px) { .sheet { bottom: 50%; border-radius: 24px; transform: translate(-50%, 60%) scale(.96); opacity: 0; transition: transform .3s cubic-bezier(.2,.8,.2,1), opacity .25s } }
-.open .sheet-bg { opacity: 1; pointer-events: auto }
-.sheet { pointer-events: none } .open .sheet { pointer-events: auto } /* скрытое окно не должно ловить мышь */
-.open .sheet { transform: translate(-50%, 0) }
-@media (min-width: 700px) { .open .sheet { transform: translate(-50%, 50%) scale(1); opacity: 1 } }
-.sheet-top { display: flex; gap: 12px; align-items: start; margin-bottom: 18px }
-.sheet-top b { display: block; font: 500 26px/1.15 var(--fd); margin-top: 4px }
-.x { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: transparent; cursor: pointer; font-size: 16px; line-height: 1; flex: 0 0 auto }
-.via { display: grid; gap: 8px }
-.via a, .via button { display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: transparent; text-decoration: none; font-weight: 500; font-size: 16px; cursor: pointer; transition: border-color .2s, background .2s }
-.via a:hover, .via button:hover { border-color: var(--wine); background: rgba(110,26,43,.04) }
-.via .badge { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: #fff }
-.via .hint { margin-left: auto; color: var(--muted); font-weight: 400; font-size: 13px }
-.note { font-size: 12.5px; color: var(--muted); margin: 14px 0 0 }
-.note a { color: var(--muted) }
-.toast { position: fixed; left: 50%; top: 18px; transform: translate(-50%, -80px); background: var(--wine); color: var(--paper); padding: 10px 18px; border-radius: 999px; z-index: 60; font-size: 14px; transition: transform .3s }
-.toast.on { transform: translate(-50%, 0) }
-
-.mbar { display: none }
-@media (max-width: 680px) {
-  .mbar { display: flex; gap: 8px; position: fixed; left: 12px; right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); z-index: 40 }
-  .mbar .btn { flex: 1; height: 54px; box-shadow: 0 10px 28px rgba(39,18,26,.3) }
-  .mbar .sq { flex: 0 0 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; color: #fff; box-shadow: 0 10px 28px rgba(39,18,26,.3) }
-  footer { padding-bottom: 100px }
-}
-
-/* наклон за курсором */
-.tilt { will-change: transform; transition: transform .5s cubic-bezier(.2,.7,.2,1) }
-.tilt.moving { transition: transform .08s linear }
-.tilt::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s;
-  background: radial-gradient(circle 240px at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.22), transparent 60%) }
-.tilt.moving::after { opacity: 1 }
-
-/* проявление: быстро, шапка раздела целиком */
-.js .rise { opacity: 0; transform: translateY(18px); transition: opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1) }
-.js .rise.in { opacity: 1; transform: none }
-.js .unblur { opacity: 0; filter: blur(6px); transform: translateY(6px); transition: opacity .3s ease, filter .3s ease, transform .3s cubic-bezier(.2,.7,.2,1) }
-.js .unblur.in { opacity: 1; filter: blur(0); transform: none }
-@keyframes up { from { opacity: 0; transform: translateY(22px) } to { opacity: 1; transform: none } }
-@keyframes clear { from { opacity: 0; filter: blur(10px) } to { opacity: 1; filter: blur(0) } }
-.hero-text > * { animation: up .7s cubic-bezier(.2,.7,.2,1) both }
-.hero h1 { animation: clear .7s ease both }
-.hero-text > *:nth-child(2) { animation-delay: .15s } .hero-text > *:nth-child(3) { animation-delay: .25s } .hero-text > *:nth-child(4) { animation-delay: .35s }
-.shot .frame img { animation: clear .9s ease .1s both }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important }
-  .js .rise, .js .unblur { opacity: 1; transform: none; filter: none }
-}
-:focus-visible { outline: 2px solid var(--wine); outline-offset: 3px }
-.price-sec { background: var(--paper) }
-.via .main { background: var(--wine); color: var(--paper); border-color: var(--wine) }
-.via .main:hover { background: var(--wine-deep) }
-.dir { text-align: left; font: inherit; color: inherit; cursor: pointer; padding: 0 }
-.dir .ph { aspect-ratio: 4 / 3 }
-@media (max-width: 700px) { h1 { font-size: min(11vw, 44px); overflow-wrap: anywhere } }
 </style>
 </head>
-<body>
+<body class="quiet center">
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 2a9.9 9.9 0 0 0-8.5 15L2 22l5.2-1.4A10 10 0 1 0 12 2Zm5.4 14c-.2.6-1.3 1.2-1.8 1.3-.5 0-1 .2-3.2-.7-2.7-1.1-4.4-3.9-4.6-4.1-.1-.2-1.1-1.5-1.1-2.8 0-1.4.7-2 1-2.3.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .5l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.2 1.6 1.9 1.1 1 2 1.3 2.3 1.4.3.2.5.1.6 0l.9-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4Z"/></symbol>
   <symbol id="i-tg" viewBox="0 0 24 24"><path d="m21.9 4.4-3.2 15c-.2 1.1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.4-.1-.6-.6-.2l-11 6.9-4.7-1.5c-1-.3-1-1 .2-1.5L20.5 3c.9-.3 1.7.2 1.4 1.4Z"/></symbol>
   <symbol id="i-vk" viewBox="0 0 24 24"><path d="M12.9 18.2C6.8 18.2 3.3 14 3.1 7h3.1c.1 5.1 2.4 7.3 4.2 7.7V7h2.9v4.4c1.8-.2 3.7-2.2 4.3-4.4h2.9a8.6 8.6 0 0 1-3.9 5.6 9 9 0 0 1 4.6 5.6h-3.2a5.6 5.6 0 0 0-4.7-4v4h-.4Z"/></symbol>
   <symbol id="i-tel" viewBox="0 0 24 24"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2Z"/></symbol>
-  <symbol id="i-cal" viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3V2Zm12 8H5v9h14v-9ZM7 12h4v4H7v-4Z"/></symbol>
 </svg>
-<div class="demo">Демо-версия сайта для Студия волос. Автор: Алексей</div>
-<header><div class="wrap bar">
-  <a class="logo" href="#top"><b>Hair Point</b><small>студия волос</small></a>
-  <nav aria-label="Разделы"><a href="#dirs">Услуги</a><a href="#prices">Цены</a><a href="#studio">Студия</a><a href="#contacts">Контакты</a></nav>
-  <div class="icons"><a href="https://wa.me/79148613238" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a></div>
-  <a class="btn-out" href="https://wa.me/79148613238" target="_blank" rel="noopener">Записаться</a>
+<header id="hdr"><div class="wrap bar">
+  <nav aria-label="Разделы"><a href="#catalog">Услуги</a><a href="#prices">Цены</a><a href="#contacts">Контакты</a></nav>
+  <a class="logo" href="#top">Hair Point</a>
+  <div class="right"><a class="tel" href="tel:+79148613238">+7 914 861-32-38</a><a class="btn sm" href="https://wa.me/79148613238" target="_blank" rel="noopener">Записаться</a></div>
 </div></header>
 <main id="top">
-  <div class="wrap hero"><div class="hero-text">
-      <h1>Парикмахерская <em>в&nbsp;Магадане</em></h1><p class="who">Студия волос Hair Point на Пролетарской,&nbsp;70</p><p>Стрижки, окрашивание, причёски и восстановление волос. Работаем без выходных, запись через WhatsApp.</p>
-      <div class="cta"><a class="btn" href="https://wa.me/79148613238" target="_blank" rel="noopener">Записаться в WhatsApp</a><a class="btn-out" href="tel:+79148613238">Позвонить</a></div>
-    </div><div class="shot"><div class="frame"><img src="img/hero.jpg" alt="Стрижка в студии"></div></div></div>
-  <div class="wrap"><div class="facts"><div class="fact rise"><b>4,7</b><span>оценка в 2ГИС, 16 оценок</span></div><div class="fact rise"><b>7 дней</b><span>в неделю, будни с 10 до 19, выходные с 11 до 18</span></div><div class="fact rise"><b>Shop</b><span>профессиональный уход для дома прямо в студии</span></div></div></div>
-  <section id="dirs"><div class="wrap"><div class="sec-head"><h2 class="unblur">Услуги</h2><p class="rise">Нажмите на услугу, чтобы записаться в WhatsApp.</p></div><div class="dirs" id="dirs-list"></div></div></section>
-  <section class="price-sec" id="prices"><div class="wrap">
-      <div class="sec-head"><h2 class="unblur">Цены</h2><p class="rise">Цены с прайса в студии. Стоимость стрижки зависит от длины, уточняйте у мастера.</p></div>
-      <div class="tabs" role="tablist" id="tabs"></div><div class="plist" id="plist"></div>
-      <p class="p-note">Информация о ценах не является публичной офертой.</p>
-    </div></section>
-  <section id="studio"><div class="wrap"><div class="sec-head"><h2 class="unblur">Студия</h2><p class="rise">Пролетарская, 70, вход с улицы под вывеской Hair. Уютно, предложим чай или кофе.</p></div><div class="gal rise"><div><img src="img/g0.jpg" alt="Зал и витрина с уходом" loading="lazy"></div><div><img src="img/g1.jpg" alt="Работы мастеров" loading="lazy"></div><div><img src="img/g2.jpg" alt="Зал" loading="lazy"></div><div><img src="img/g3.jpg" alt="Вход в студию" loading="lazy"></div></div></div></section>
-  <section class="steps-sec" id="how"><div class="wrap"><div class="sec-head"><h2 class="unblur">Как записаться</h2></div><div class="steps"><div class="step rise"><span class="n">01</span><h3>Напишите нам</h3><p>В WhatsApp или по телефону, текст заявки подставим сами.</p></div><div class="step rise"><span class="n">02</span><h3>Выберите время</h3><p>Подскажем свободного мастера.</p></div><div class="step rise"><span class="n">03</span><h3>Приходите</h3><p>Пролетарская, 70.</p></div></div></div></section>
+  <div class="stage"><div class="mesh" aria-hidden="true" style="--m1:#7a4a1c;--m2:#3b1f33;--m3:#a8752f"><i></i><i></i><i></i></div><canvas class="silk" id="silk" aria-hidden="true"></canvas><div class="grain" aria-hidden="true" style="background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E&quot;)"></div>
+    <div class="wrap hero">
+      <div class="hero-top">
+        <h1><span class="big"><span class="w">Hair</span> <span class="w">Point</span></span><span class="sub">студия волос в&nbsp;Магадане</span></h1>
+        <div class="cta"><a class="btn" href="https://wa.me/79148613238" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>Записаться в WhatsApp</a><a class="btn ghost" href="tel:+79148613238">+7 914 861-32-38</a></div>
+      </div>
+      <div class="band up"><figure><img src="img/b0.jpg" alt="Окрашивание блонд"></figure><figure><img src="img/b1.jpg" alt="Стрижка с укладкой"></figure><figure><img src="img/b2.jpg" alt="Стрижка с объёмом"></figure></div>
+    </div>
+    
+  </div>
+  <section id="catalog"><div class="wrap"><h2 class="up">Услуги</h2><div class="rows"><button class="row up" type="button" data-book="Стрижки">
+      <span class="no">1</span><img src="img/r0.jpg" alt="" loading="lazy"><h3>Стрижки</h3><p>Женские стрижки, чёлка, кончики.</p>
+      <span class="from">от 500 ₽</span></button><button class="row up" type="button" data-book="Окрашивание">
+      <span class="no">2</span><img src="img/r1.jpg" alt="" loading="lazy"><h3>Окрашивание</h3><p>Malecula, Kaaral, Constant Delight, Four Reasons. Цена за 10 г краски.</p>
+      <span class="from">от 700 ₽</span></button><button class="row up" type="button" data-book="Причёски">
+      <span class="no">3</span><img src="img/r2.jpg" alt="" loading="lazy"><h3>Причёски</h3><p>Вечерние и свадебные.</p>
+      <span class="from">от 5 000 ₽</span></button><button class="row up" type="button" data-book="Укладка">
+      <span class="no">4</span><img src="img/r3.jpg" alt="" loading="lazy"><h3>Укладка</h3><p>Фен и стайлер.</p>
+      <span class="from">от 1 000 ₽</span></button><button class="row up" type="button" data-book="Уход и выпрямление">
+      <span class="no">5</span><img src="img/r4.jpg" alt="" loading="lazy"><h3>Уход и выпрямление</h3><p>Восстановление, детокс кожи головы, долговременное выпрямление.</p>
+      <span class="from">от 1 500 ₽</span></button><button class="row up" type="button" data-book="Химическая завивка">
+      <span class="no">6</span><img src="img/r5.jpg" alt="" loading="lazy"><h3>Химическая завивка</h3><p>Цена зависит от длины волос, уточняйте у мастера.</p>
+      <span class="from">от 5 000 ₽</span></button></div></div></section>
+  <section id="studio"><div class="wrap"><h2 class="up">Студия</h2><div class="mosaic"><figure class="up"><img src="img/m0.jpg" alt="Зал и витрина с уходом" loading="lazy"><figcaption>Зал и витрина с уходом</figcaption></figure><figure class="up"><img src="img/m1.jpg" alt="Окрашивание" loading="lazy"><figcaption>Окрашивание</figcaption></figure><figure class="up"><img src="img/m2.jpg" alt="Вечерняя причёска" loading="lazy"><figcaption>Вечерняя причёска</figcaption></figure><figure class="up"><img src="img/m3.jpg" alt="Химическая завивка" loading="lazy"><figcaption>Химическая завивка</figcaption></figure><figure class="up"><img src="img/m4.jpg" alt="Вход в студию" loading="lazy"><figcaption>Вход в студию</figcaption></figure></div></div></section>
+  <section id="prices"><div class="wrap"><h2 class="up">Цены</h2><div class="acc"><div><details open><summary>Стрижки<i></i></summary><div class="pl"><button type="button" data-book="Стрижка чёлки"><span>Стрижка чёлки</span><b>от 500 ₽</b></button><button type="button" data-book="Стрижка кончиков"><span>Стрижка кончиков</span><b>от 1 000 ₽</b></button><button type="button" data-book="Укладка: фен, стайлер"><span>Укладка: фен, стайлер</span><b>от 1 000 ₽</b></button><button type="button" data-book="Мытьё головы"><span>Мытьё головы</span><b>от 1 000 ₽</b></button><button type="button" data-book="Причёска вечерняя, свадебная"><span>Причёска вечерняя, свадебная</span><b>от 5 000 ₽</b></button></div></details><details open><summary>Malecula, Kaaral<i></i></summary><div class="pl"><button type="button" data-book="Окрашивание, 10 г"><span>Окрашивание, 10 г</span><b>1 000 ₽</b></button><button type="button" data-book="Осветление, 30 г"><span>Осветление, 30 г</span><b>3 500 ₽</b></button><button type="button" data-book="Мелирование на фольгу, 30 г"><span>Мелирование на фольгу, 30 г</span><b>4 500 ₽</b></button><button type="button" data-book="Химическая завивка"><span>Химическая завивка</span><b>от 5 000 ₽</b></button><button type="button" data-book="Окрашивание в технике"><span>Окрашивание в технике</span><b>от 15 000 ₽</b></button></div></details></div><div><details open><summary>Constant Delight<i></i></summary><div class="pl"><button type="button" data-book="Окрашивание, 10 г"><span>Окрашивание, 10 г</span><b>700 ₽</b></button><button type="button" data-book="Осветление, 30 г"><span>Осветление, 30 г</span><b>2 500 ₽</b></button><button type="button" data-book="Мелирование на фольгу, 30 г"><span>Мелирование на фольгу, 30 г</span><b>3 500 ₽</b></button><button type="button" data-book="Смывка"><span>Смывка</span><b>от 3 000 ₽</b></button><button type="button" data-book="Окрашивание в технике"><span>Окрашивание в технике</span><b>от 10 000 ₽</b></button></div></details><details open><summary>Уход<i></i></summary><div class="pl"><button type="button" data-book="Окрашивание Four Reasons, 10 г"><span>Окрашивание Four Reasons, 10 г</span><b>1 100 ₽</b></button><button type="button" data-book="Детокс: пилинг кожи головы"><span>Детокс: пилинг кожи головы</span><b>1 500 ₽</b></button><button type="button" data-book="Восстановление волос"><span>Восстановление волос</span><b>от 3 500 ₽</b></button><button type="button" data-book="Долговременное выпрямление"><span>Долговременное выпрямление</span><b>от 5 000 ₽</b></button></div></details></div></div></div></section>
+  <section id="how"><div class="wrap"><h2 class="up">Как записаться</h2><div class="steps"><div class="step up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9.5h8M8 12.5h5"/></svg><h3>Напишите нам</h3><p>В WhatsApp или по телефону, текст заявки подставим сами.</p></div><div class="step up"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h3>Выберите время</h3><p>Подскажем свободного мастера.</p></div><div class="step up"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg><h3>Приходите</h3><p>Пролетарская, 70.</p></div></div></div></section>
+  <div class="contact" id="contacts"><div class="wrap">
+    <div>
+      <address class="up">Магадан,<br>Пролетарская улица, 70</address>
+      <dl><dt>Время</dt><dd>Пн–пт 10:00–19:00, сб–вс 11:00–18:00</dd><dt>Телефон</dt><dd><a href="tel:+79148613238">+7 914 861-32-38</a></dd></dl>
+      <div class="cta"><a class="btn" href="https://wa.me/79148613238" target="_blank" rel="noopener"><svg class="ico"><use href="#i-wa"/></svg>Написать в WhatsApp</a>
+        <a class="btn ghost" href="https://2gis.ru/magadan/firm/70000001039679429" target="_blank" rel="noopener">Маршрут в 2ГИС</a></div>
+    </div>
+    <div class="map"><div id="map" role="region" aria-label="Студия волос на карте"></div></div>
+  </div></div>
 </main>
-<footer id="contacts"><div class="wrap"><div class="f-top">
-  <div><h2>Записаться за&nbsp;минуту</h2><a class="btn" href="https://wa.me/79148613238" target="_blank" rel="noopener">Написать в WhatsApp</a></div>
-  <div class="fcol"><h4>Контакты</h4><span>Магадан, Пролетарская улица, 70</span><span>Пн–пт 10:00–19:00, сб–вс 11:00–18:00</span><a href="tel:+79148613238">+7 914 861-32-38</a><div class="soc"><a href="https://wa.me/79148613238" target="_blank" rel="noopener" aria-label="WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a></div></div>
-  <div class="fcol"><h4>Разделы</h4><a href="#dirs">Услуги</a><a href="#prices">Цены</a><a href="https://2gis.ru/magadan/firm/70000001039679429" target="_blank" rel="noopener">Мы на карте 2ГИС</a></div>
-</div><div class="legal">
-  <p>[ИП или ООО], ИНН [ИНН], ОГРН [ОГРН]. Адрес: Магадан, Пролетарская улица, 70.</p>
-  <p>Сайт носит информационный характер и не является публичной офертой. Стоимость уточняйте при обращении.</p>
+<footer><div class="wrap">
   <nav aria-label="Документы"><a href="privacy.html">Политика конфиденциальности</a><a href="consent.html">Согласие на обработку персональных данных</a></nav>
-</div></div></footer>
-<div class="mbar"><a class="btn" href="https://wa.me/79148613238" target="_blank" rel="noopener">Записаться в WhatsApp</a><a class="sq" style="background:var(--wine)" href="tel:+79148613238" aria-label="Позвонить"><svg class="ico"><use href="#i-tel"/></svg></a></div>
-<div id="order" aria-hidden="true"><div class="sheet-bg" data-close></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="o-name">
-  <div class="sheet-top"><b id="o-name"></b><button class="x" data-close aria-label="Закрыть">&#x2715;</button></div>
-  <div class="via"><a class="main" id="o-wa" target="_blank" rel="noopener"><span class="badge" style="background:var(--wa)"><svg class="ico"><use href="#i-wa"/></svg></span>WhatsApp<span class="hint">текст уже готов</span></a>
-  <a href="tel:+79148613238"><span class="badge" style="background:var(--wine)"><svg class="ico"><use href="#i-tel"/></svg></span>Позвонить<span class="hint">+7 914 861-32-38</span></a></div>
-  <p class="note">Обращаясь, вы соглашаетесь с <a href="privacy.html">политикой конфиденциальности</a> и <a href="consent.html">обработкой персональных данных</a>.</p>
+  <p>[ИП или ООО], ИНН [ИНН], ОГРН [ОГРН]. Адрес: Магадан, Пролетарская улица, 70.</p>
+</div></footer>
+<a class="fab" href="https://wa.me/79148613238" target="_blank" rel="noopener" aria-label="Написать в WhatsApp"><svg class="ico"><use href="#i-wa"/></svg></a>
+<div id="order" aria-hidden="true"><div class="bg" data-close></div><div class="dlg" role="dialog" aria-modal="true" aria-labelledby="o-name">
+  <button class="x" type="button" data-close aria-label="Закрыть">&#x2715;</button>
+  <h3 id="o-name"></h3>
+  <div class="ways"><a id="o-wa" target="_blank" rel="noopener"><span class="dot" style="background:var(--wa)"><svg class="ico"><use href="#i-wa"/></svg></span>WhatsApp<small>текст уже готов</small></a>
+  <a href="tel:+79148613238"><span class="dot" style="background:var(--acc);color:var(--bg)"><svg class="ico"><use href="#i-tel"/></svg></span>Позвонить<small>+7 914 861-32-38</small></a></div>
+  <p>Обращаясь, вы соглашаетесь с <a href="privacy.html">политикой конфиденциальности</a> и <a href="consent.html">обработкой персональных данных</a>.</p>
 </div></div>
 <script>
 document.documentElement.classList.add("js");
-const DIRS = [{"i": "d0.jpg", "n": "Стрижки", "t": "Женские стрижки, чёлка, кончики.", "f": 500}, {"i": "d1.jpg", "n": "Окрашивание", "t": "Malecula, Kaaral, Constant Delight, Four Reasons. Цена за 10 г краски.", "f": 700}, {"i": "d2.jpg", "n": "Причёски", "t": "Вечерние и свадебные.", "f": 5000}, {"i": "d3.jpg", "n": "Укладка", "t": "Фен и стайлер.", "f": 1000}, {"i": "d4.jpg", "n": "Уход и выпрямление", "t": "Восстановление, детокс кожи головы, долговременное выпрямление.", "f": 1500}, {"i": "d5.jpg", "n": "Химическая завивка", "t": "Цена зависит от длины волос, уточняйте у мастера.", "f": 5000}], PRICES = {"Стрижки": [["Стрижка чёлки", 500, true], ["Стрижка кончиков", 1000, true], ["Укладка: фен, стайлер", 1000, true], ["Мытьё головы", 1000, true], ["Причёска вечерняя, свадебная", 5000, true]], "Malecula, Kaaral": [["Окрашивание, 10 г", 1000], ["Осветление, 30 г", 3500], ["Мелирование на фольгу, 30 г", 4500], ["Химическая завивка", 5000, true], ["Окрашивание в технике", 15000, true]], "Constant Delight": [["Окрашивание, 10 г", 700], ["Осветление, 30 г", 2500], ["Мелирование на фольгу, 30 г", 3500], ["Смывка", 3000, true], ["Окрашивание в технике", 10000, true]], "Уход": [["Окрашивание Four Reasons, 10 г", 1100], ["Детокс: пилинг кожи головы", 1500], ["Восстановление волос", 3500, true], ["Долговременное выпрямление", 5000, true]]}, WA = "79148613238", VERB = "Записаться";
-const rub = n => n.toLocaleString("ru-RU") + " ₽";
-document.getElementById("dirs-list").innerHTML = DIRS.map(d => `<button class="dir rise" type="button" data-book="${d.n}">
-  <div class="ph"><img src="img/${d.i}" alt="" loading="lazy"></div>
-  <div class="tx"><h3>${d.n}</h3><p>${d.t}</p>${d.f ? `<span class="from">от ${rub(d.f)}</span>` : ""}</div></button>`).join("");
-const tabs = document.getElementById("tabs");
-if (tabs) {
-  const keys = Object.keys(PRICES);
-  tabs.innerHTML = keys.map((k, i) => `<button role="tab" aria-selected="${i === 0}" data-tab="${k}">${k}</button>`).join("");
-  const showTab = k => {
-    tabs.querySelectorAll("button").forEach(b => b.setAttribute("aria-selected", b.dataset.tab === k));
-    document.getElementById("plist").innerHTML = PRICES[k].map(([n, s, from]) => `<div class="pr"><span class="nm">${n}</span><span class="lead" aria-hidden="true"></span><span class="sum">${from ? "от " : ""}${rub(s)}</span><button type="button" data-book="${n}">${VERB}</button></div>`).join("");
+const WA = "79148613238";
+const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target) } }), { threshold: .12 }) : null;
+document.querySelectorAll(".up").forEach((el, i) => { el.style.transitionDelay = (i % 3) * 60 + "ms"; io ? io.observe(el) : el.classList.add("in") });
+const hdr = document.getElementById("hdr"), blur = document.getElementById("blur");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let ticking = false;
+const onScroll = () => {
+  hdr.classList.toggle("solid", scrollY > 30);
+  if (blur && !still && scrollY < innerHeight * 2) blur.style.transform = `translate3d(0, ${scrollY * .3}px, 0)`;
+  ticking = false;
+};
+addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll) } }, { passive: true });
+onScroll();
+// шёлк: тонкие линии волнами, похоже на пряди, но абстрактно; рисуется только когда первый экран виден
+const silk = document.getElementById("silk");
+if (silk) {
+  const ctx = silk.getContext("2d"), col = getComputedStyle(document.documentElement).getPropertyValue("--acc").trim();
+  let W = 0, Hh = 0, on = true, t0 = performance.now();
+  const size = () => { const r = silk.getBoundingClientRect(), d = Math.min(devicePixelRatio || 1, 2); W = r.width; Hh = r.height; silk.width = W * d; silk.height = Hh * d; ctx.setTransform(d, 0, 0, d, 0, 0) };
+  const N = 34;
+  const draw = now => {
+    const t = still ? 0 : (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, Hh);
+    for (let i = 0; i < N; i++) {
+      const k = i / N, base = Hh * (.18 + k * .7), amp = Hh * (.06 + .05 * Math.sin(i * 1.7));
+      ctx.beginPath();
+      for (let x = -20; x <= W + 20; x += 14) {
+        const u = x / W;
+        const y = base + Math.sin(u * 5.2 + t * .35 + i * .21) * amp + Math.sin(u * 11 - t * .22 + i * .5) * amp * .35 + Math.sin(u * 2.1 + t * .12) * Hh * .08;
+        x < 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = col; ctx.globalAlpha = .1 + .38 * Math.pow(Math.sin(k * Math.PI), 2); ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+    if (on && !still) requestAnimationFrame(draw);
   };
-  tabs.addEventListener("click", e => { const b = e.target.closest("[data-tab]"); if (b) showTab(b.dataset.tab) });
-  showTab(keys[0]);
+  size(); addEventListener("resize", () => { size(); if (still) draw(0) });
+  if ("IntersectionObserver" in window) new IntersectionObserver(es => { const v = es[0].isIntersecting; if (v && !on) { on = true; requestAnimationFrame(draw) } on = v }).observe(silk);
+  requestAnimationFrame(draw);
 }
-const show = el => { el.classList.add("in"); el.querySelectorAll(".rise, .unblur").forEach(c => c.classList.add("in")) };
-const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { show(e.target); io.unobserve(e.target) } }), { threshold: .1 }) : null;
-const heads = [...document.querySelectorAll(".sec-head")];
-heads.forEach(el => io ? io.observe(el) : show(el));
-document.querySelectorAll(".rise, .unblur").forEach(el => { if (!heads.some(h => h.contains(el))) io ? io.observe(el) : el.classList.add("in") });
+const PHONE = "+7 914 861-32-38";
+if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+  const toast = Object.assign(document.createElement("div"), { className: "toast", role: "status" });
+  document.body.append(toast);
+  let hide;
+  document.addEventListener("click", e => {
+    const a = e.target.closest('a[href^="tel:"]'); if (!a) return;
+    e.preventDefault();
+    const r = a.getBoundingClientRect(), say = t => { toast.textContent = t; toast.style.left = r.left + r.width / 2 + "px"; toast.style.top = r.top - 44 + "px";
+      toast.classList.add("on"); clearTimeout(hide); hide = setTimeout(() => toast.classList.remove("on"), 1800) };
+    const old = () => { const t = Object.assign(document.createElement("textarea"), { value: PHONE }); t.style.cssText = "position:fixed;opacity:0";
+      document.body.append(t); t.select(); let ok = false; try { ok = document.execCommand("copy") } catch (_) {} t.remove(); return ok };
+    (navigator.clipboard ? navigator.clipboard.writeText(PHONE) : Promise.reject()).then(() => true, old).then(ok => say(ok ? "Номер скопирован" : PHONE));
+  });
+}
 const box = document.getElementById("order");
 function openBook(what) {
   document.getElementById("o-name").textContent = what;
@@ -314,6 +354,19 @@ function openBook(what) {
 const closeBook = () => { box.classList.remove("open"); box.setAttribute("aria-hidden", "true") };
 document.addEventListener("click", e => { const b = e.target.closest("[data-book]"); if (b) return openBook(b.dataset.book); if (e.target.closest("[data-close]")) closeBook() });
 document.addEventListener("keydown", e => { if (e.key === "Escape") closeBook() });
+// тёмная карта без рекламы: Leaflet + тайлы OSM, затемнённые фильтром, грузится, когда раздел контактов близко
+const mapEl = document.getElementById("map");
+const initMap = () => {
+  if (!window.L || mapEl.dataset.ready) return; mapEl.dataset.ready = 1;
+  const pt = [59.556246, 150.825969], m = L.map(mapEl, { scrollWheelZoom: false, attributionControl: false }).setView(pt, 16);
+  L.control.attribution({ prefix: false }).addTo(m);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(m);
+  L.marker(pt, { icon: L.divIcon({ className: "", html: '<div class="pin"></div>', iconSize: [44, 44], iconAnchor: [22, 44], popupAnchor: [0, -46] }) })
+    .addTo(m).bindPopup('<b>Студия волос</b><br>Пролетарская улица, 70<br><a href="https://2gis.ru/magadan/firm/70000001039679429" target="_blank" rel="noopener">Маршрут в 2ГИС</a>');
+};
+const mio = "IntersectionObserver" in window ? new IntersectionObserver(es => { if (es[0].isIntersecting) { initMap(); mio.disconnect() } }, { rootMargin: "400px" }) : null;
+addEventListener("load", () => mio ? mio.observe(mapEl) : initMap());
 </script>
 <script>
 (function(){try{
